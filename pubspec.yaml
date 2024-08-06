@@ -1,0 +1,22 @@
+name: nisitku_lite
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  connectivity_plus: ^6.0.4
+  flutter:
+    sdk: flutter
+  flutter_secure_storage: ^9.2.2
+  get: ^4.6.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
