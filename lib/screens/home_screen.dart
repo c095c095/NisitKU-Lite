@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nisitku_lite/controllers/auth_controller.dart';
-import 'package:nisitku_lite/services/api_service.dart';
+import 'package:nisitku_lite/services/auth_service.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
   final AuthController _authController = Get.find();
-  final ApiService _apiService = ApiService();
+  final AuthService _apiService = AuthService();
 
   @override
   Widget build(BuildContext context) {

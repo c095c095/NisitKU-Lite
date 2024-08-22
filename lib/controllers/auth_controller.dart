@@ -1,12 +1,10 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nisitku_lite/services/auth_service.dart';
-import 'package:nisitku_lite/services/api_service.dart';
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();
-  final ApiService _apiService = ApiService();
-  final FlutterSecureStorage _storage = FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   var isLoading = false.obs;
   var isAuthenticated = false.obs;
@@ -16,19 +14,34 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadUserFromStorage();
+    loadUserFromStorage();
   }
 
-  Future<void> _loadUserFromStorage() async {
+  Future<void> loadUserFromStorage() async {
     final token = await _storage.read(key: 'token');
 
     if (token != null) {
       try {
-        final result = await _apiService.getProfile();
+        isLoading(true);
+        errorMessage('');
 
-        isAuthenticated(true);
+        final result = await _authService.getProfile();
+
+        if (result['success']) {
+          user.value = result['data'];
+          isAuthenticated(true);
+        } else {
+          errorMessage(result['message']);
+        }
+
+        if (result['forceLogout'] == true) {
+          logout();
+        }
       } catch (e) {
+        errorMessage('เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดติดต่อผู้ดูแลระบบ');
         logout();
+      } finally {
+        isLoading(false);
       }
     }
   }
