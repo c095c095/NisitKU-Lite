@@ -86,4 +86,25 @@ class SharedPreferencesService {
       _logger.e('Error clearing all preferences: $e');
     }
   }
+
+  Future<Map<String, dynamic>> getStudentData() async {
+    await _initializePreferences();
+
+    final Map<String, dynamic> studentData = {};
+
+    try {
+      final keys = _prefs!.getKeys();
+      await Future.forEach<String>(keys, (key) async {
+        if (key.startsWith('student.')) {
+          final value = await getValue<dynamic>(key);
+          studentData[key] = value;
+        }
+      });
+
+      return studentData;
+    } catch (e) {
+      _logger.e('Error getting student data: $e');
+      return studentData;
+    }
+  }
 }

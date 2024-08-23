@@ -15,7 +15,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       getPages: routes,
-      initialRoute: '/login',
+      initialRoute: authController.isAuthenticated.value ? '/home' : '/login',
     );
   }
 }

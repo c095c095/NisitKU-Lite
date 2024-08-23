@@ -19,22 +19,19 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                  'Welcome ${_authController.user['name_th']} ${_authController.user['surname_th']}'),
-              Builder(
-                builder: (_) {
-                  return FutureBuilder(
-                    future: _apiService.getProfile(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        return Text(snapshot.data.toString());
-                      }
-                    },
+                  'Welcome ${_authController.user['firstname_th']} ${_authController.user['lastname_th']}'),
+              Column(
+                children: _authController.user.entries.map((entry) {
+                  return Row(
+                    children: [
+                      Text(entry.key.toString()),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(entry.value.toString()),
+                      ),
+                    ],
                   );
-                },
+                }).toList(),
               ),
               ElevatedButton(
                 onPressed: () {

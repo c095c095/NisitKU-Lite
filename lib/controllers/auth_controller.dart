@@ -1,8 +1,9 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:nisitku_lite/services/auth_service.dart';
 import 'package:nisitku_lite/services/shared_preferences_service.dart';
-import 'package:logger/logger.dart';
+import 'package:nisitku_lite/utils/text.dart';
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();
@@ -18,7 +19,7 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // _loadUserFromStorage();
+    _loadUserFromStorage();
   }
 
   Future<void> login(String username, String password) async {
@@ -45,8 +46,26 @@ class AuthController extends GetxController {
           user.value = profile['data'];
 
           for (final entry in user.entries) {
-            await _prefsService.setValue(entry.key, entry.value);
+            await _prefsService.setValue('student.${entry.key}', entry.value);
           }
+
+          result['data']['surname_en'] =
+              capitalize(result['data']['surname_en']);
+
+          user.addAll({
+            'firstname_th': result['data']['name_th'],
+            'lastname_th': result['data']['surname_th'],
+            'firstname_en': result['data']['name_en'],
+            'lastname_en': result['data']['surname_en'],
+          });
+          await _prefsService.setValue(
+              'student.firstname_th', result['data']['name_th']);
+          await _prefsService.setValue(
+              'student.lastname_th', result['data']['surname_th']);
+          await _prefsService.setValue(
+              'student.firstname_en', result['data']['name_en']);
+          await _prefsService.setValue(
+              'student.lastname_en', result['data']['surname_en']);
 
           isAuthenticated(true);
           _logger.i('Login success: ${user.values}');
@@ -74,36 +93,50 @@ class AuthController extends GetxController {
   }
 
   Future<void> _loadUserFromStorage() async {
-    final token = await _storage.read(key: 'token');
+    try {
+      final token = await _storage.read(key: 'token');
 
-    if (token != null) {
-      try {
+      if (token != null) {
         isLoading(true);
         errorMessage('');
 
-        final result = await _authService.getProfile();
+        final result = await _prefsService.getStudentData();
 
-        if (result['success']) {
-          user.value = result['data'];
+        if (result.isNotEmpty) {
+          user.value = result;
           isAuthenticated(true);
-        } else {
-          errorMessage(result['message']);
+
+          _logger.i('User loaded from storage: ${user.values}');
         }
 
-        if (result['forceLogout'] == true) {
-          await logout();
+        var profile = await _authService.getProfile();
+
+        if (result['success'] == true) {
+          profile['data']?.remove('status');
+
+          user.value = profile['data'];
+
+          for (final entry in user.entries) {
+            await _prefsService.setValue(entry.key, entry.value);
+          }
+
+          isAuthenticated(true);
         }
-      } catch (e) {
-        errorMessage('เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดติดต่อผู้ดูแลระบบ');
-        await logout();
-      } finally {
-        isLoading(false);
+      }
+    } catch (e) {
+      _logger.e('Unexpected error: $e');
+      errorMessage('เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดติดต่อผู้ดูแลระบบ');
+    } finally {
+      isLoading(false);
+
+      if (isAuthenticated.value) {
+        Get.offAllNamed('/home');
       }
     }
   }
 
   Future<void> logout() async {
-    _authService.logout();
+    // _authService.logout();
     isAuthenticated(false);
     user.clear();
     await _storage.delete(key: 'token');
