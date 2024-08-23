@@ -114,10 +114,19 @@ class AuthController extends GetxController {
         if (result['success'] == true) {
           profile['data']?.remove('status');
 
-          user.value = profile['data'];
+          final updatedUser = {
+            if (user['firstname_th'] != null)
+              'firstname_th': user['firstname_th'],
+            if (user['lastname_th'] != null) 'lastname_th': user['lastname_th'],
+            if (user['firstname_en'] != null)
+              'firstname_en': user['firstname_en'],
+            if (user['lastname_en'] != null) 'lastname_en': user['lastname_en'],
+          };
+
+          user.value = {...profile['data'], ...updatedUser};
 
           for (final entry in user.entries) {
-            await _prefsService.setValue(entry.key, entry.value);
+            await _prefsService.setValue('student.${entry.key}', entry.value);
           }
 
           isAuthenticated(true);
