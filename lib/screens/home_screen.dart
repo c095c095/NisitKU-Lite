@@ -15,27 +15,35 @@ class HomeScreen extends StatelessWidget {
         title: Text('Home'),
       ),
       body: Center(
-        child: Column(
-          children: [
-            Text(
-                'Welcome ${_authController.user['name_th']} ${_authController.user['surname_th']}'),
-            Builder(
-              builder: (_) {
-                return FutureBuilder(
-                  future: _apiService.getProfile(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return Text('${snapshot.data.toString()}');
-                    }
-                  },
-                );
-              },
-            )
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Text(
+                  'Welcome ${_authController.user['name_th']} ${_authController.user['surname_th']}'),
+              Builder(
+                builder: (_) {
+                  return FutureBuilder(
+                    future: _apiService.getProfile(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return Text(snapshot.data.toString());
+                      }
+                    },
+                  );
+                },
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _authController.logout();
+                },
+                child: const Text('Logout'),
+              ),
+            ],
+          ),
         ),
       ),
     );

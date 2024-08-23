@@ -37,7 +37,7 @@ class AuthService extends GetxService {
 
   Future<Map<String, dynamic>> getProfile() async {
     final token = await _storage.read(key: 'token');
-    final id = await _storage.read(key: 'id');
+    final id = await _storage.read(key: 'student_id');
 
     if (token == null || id == null) {
       return {
