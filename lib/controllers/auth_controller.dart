@@ -106,7 +106,7 @@ class AuthController extends GetxController {
 
         var profile = await _authService.getProfile();
 
-        if (result['success'] == true) {
+        if (profile['success'] == true) {
           profile['data']?.remove('status');
 
           final updatedUser = {
@@ -122,7 +122,11 @@ class AuthController extends GetxController {
             await _prefsService.setValue('student.${entry.key}', entry.value);
           }
 
+          _logger.i('User updated: ${user.values}');
+
           isAuthenticated(true);
+        } else {
+          _logger.w('Failed to get profile: ${profile['message']}');
         }
       }
     } catch (e) {
