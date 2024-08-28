@@ -138,11 +138,11 @@ class AuthController extends GetxController {
   }
 
   Future<void> logout() async {
-    // _authService.logout();
     isAuthenticated(false);
     user.clear();
     await _storage.delete(key: 'token');
     await _storage.delete(key: 'id');
+    await _prefsService.clearAll();
     Get.offAllNamed('/login');
   }
 }
