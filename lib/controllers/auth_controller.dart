@@ -49,8 +49,7 @@ class AuthController extends GetxController {
             await _prefsService.setValue('student.${entry.key}', entry.value);
           }
 
-          result['data']['surname_en'] =
-              capitalize(result['data']['surname_en']);
+          result['data']['surname_en'] = capitalize(result['data']['surname_en']);
 
           user.addAll({
             'firstname_th': result['data']['name_th'],
@@ -58,14 +57,10 @@ class AuthController extends GetxController {
             'firstname_en': result['data']['name_en'],
             'lastname_en': result['data']['surname_en'],
           });
-          await _prefsService.setValue(
-              'student.firstname_th', result['data']['name_th']);
-          await _prefsService.setValue(
-              'student.lastname_th', result['data']['surname_th']);
-          await _prefsService.setValue(
-              'student.firstname_en', result['data']['name_en']);
-          await _prefsService.setValue(
-              'student.lastname_en', result['data']['surname_en']);
+          await _prefsService.setValue('student.firstname_th', result['data']['name_th']);
+          await _prefsService.setValue('student.lastname_th', result['data']['surname_th']);
+          await _prefsService.setValue('student.firstname_en', result['data']['name_en']);
+          await _prefsService.setValue('student.lastname_en', result['data']['surname_en']);
 
           isAuthenticated(true);
           _logger.i('Login success: ${user.values}');
@@ -115,11 +110,9 @@ class AuthController extends GetxController {
           profile['data']?.remove('status');
 
           final updatedUser = {
-            if (user['firstname_th'] != null)
-              'firstname_th': user['firstname_th'],
+            if (user['firstname_th'] != null) 'firstname_th': user['firstname_th'],
             if (user['lastname_th'] != null) 'lastname_th': user['lastname_th'],
-            if (user['firstname_en'] != null)
-              'firstname_en': user['firstname_en'],
+            if (user['firstname_en'] != null) 'firstname_en': user['firstname_en'],
             if (user['lastname_en'] != null) 'lastname_en': user['lastname_en'],
           };
 

@@ -2,8 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
 
 class SharedPreferencesService {
-  static final SharedPreferencesService _instance =
-      SharedPreferencesService._internal();
+  static final SharedPreferencesService _instance = SharedPreferencesService._internal();
 
   SharedPreferences? _prefs;
   bool _isInitialized = false;
@@ -58,6 +57,8 @@ class SharedPreferencesService {
         return _prefs!.getBool(key) as T?;
       } else if (T == List<String>) {
         return _prefs!.getStringList(key) as T?;
+      } else if (T == dynamic) {
+        return _prefs!.get(key) as T?;
       } else {
         throw UnsupportedError('Unsupported type');
       }
