@@ -97,8 +97,7 @@ class SharedPreferencesService {
       final keys = _prefs!.getKeys();
       await Future.forEach<String>(keys, (key) async {
         if (key.startsWith('student.')) {
-          final value = await getValue<dynamic>(key);
-          studentData[key] = value;
+          studentData[key] = _prefs!.get(key);
         }
       });
 
