@@ -8,14 +8,14 @@ void main() async {
 }
 
 class MainApp extends StatelessWidget {
-  MainApp({Key? key}) : super(key: key);
+  MainApp({super.key});
   final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       getPages: routes,
-      initialRoute: authController.isAuthenticated.value ? '/home' : '/login',
+      initialRoute: '/initialization',
     );
   }
 }

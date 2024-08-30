@@ -15,12 +15,7 @@ class AuthController extends GetxController {
   var isAuthenticated = false.obs;
   var errorMessage = ''.obs;
   var user = {}.obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    _loadUserFromStorage();
-  }
+  var token = ''.obs;
 
   Future<void> login(String username, String password) async {
     try {
@@ -30,25 +25,18 @@ class AuthController extends GetxController {
       final result = await _authService.login(username, password);
 
       if (result['success'] == true) {
-        final token = result['data']['token'];
+        token.value = result['data']['token'];
         final studentId = result['data']['id'];
 
         await Future.wait([
-          _storage.write(key: 'token', value: token),
+          _storage.write(key: 'token', value: token.value),
           _storage.write(key: 'student_id', value: studentId),
         ]);
 
-        var profile = await _authService.getProfile();
+        var profile = await _authService.getProfile(token.value, studentId);
 
         if (profile['success'] == true) {
-          profile['data']?.remove('status');
-
-          user.value = profile['data'];
-
-          for (final entry in user.entries) {
-            await _prefsService.setValue('student.${entry.key}', entry.value);
-          }
-
+          user.value = profile['data']..remove('status');
           result['data']['surname_en'] = capitalize(result['data']['surname_en']);
 
           user.addAll({
@@ -57,16 +45,14 @@ class AuthController extends GetxController {
             'firstname_en': result['data']['name_en'],
             'lastname_en': result['data']['surname_en'],
           });
-          await _prefsService.setValue('student.firstname_th', result['data']['name_th']);
-          await _prefsService.setValue('student.lastname_th', result['data']['surname_th']);
-          await _prefsService.setValue('student.firstname_en', result['data']['name_en']);
-          await _prefsService.setValue('student.lastname_en', result['data']['surname_en']);
+
+          await _updateUserPreferences(user);
 
           isAuthenticated(true);
           _logger.i('Login success: ${user.values}');
+          Get.offAllNamed('/home');
         } else {
-          await _storage.delete(key: 'token');
-          await _storage.delete(key: 'id');
+          await _clearAuthData();
 
           _logger.w('Login failed: ${profile['message']}');
           errorMessage('เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดติดต่อผู้ดูแลระบบ');
@@ -80,18 +66,14 @@ class AuthController extends GetxController {
       errorMessage('เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดติดต่อผู้ดูแลระบบ');
     } finally {
       isLoading(false);
-
-      if (isAuthenticated.value) {
-        Get.offAllNamed('/home');
-      }
     }
   }
 
-  Future<void> _loadUserFromStorage() async {
+  Future<void> loadUserFromStorage() async {
     try {
-      final token = await _storage.read(key: 'token');
+      token.value = await _storage.read(key: 'token') ?? '';
 
-      if (token != null) {
+      if (token.value.isNotEmpty) {
         isLoading(true);
         errorMessage('');
 
@@ -104,7 +86,7 @@ class AuthController extends GetxController {
           _logger.i('User loaded from storage: ${user.values}');
         }
 
-        var profile = await _authService.getProfile();
+        var profile = await _authService.getProfile(token.value, user['id']);
 
         if (profile['success'] == true) {
           profile['data']?.remove('status');
@@ -134,19 +116,26 @@ class AuthController extends GetxController {
       errorMessage('เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดติดต่อผู้ดูแลระบบ');
     } finally {
       isLoading(false);
-
-      if (isAuthenticated.value) {
-        Get.offAllNamed('/home');
-      }
     }
   }
 
   Future<void> logout() async {
+    await _clearAuthData();
+    Get.offAllNamed('/login');
+  }
+
+  Future<void> _updateUserPreferences(RxMap<dynamic, dynamic> data) async {
+    for (final entry in data.entries) {
+      await _prefsService.setValue('student.${entry.key}', entry.value);
+    }
+  }
+
+  Future<void> _clearAuthData() async {
     isAuthenticated(false);
     user.clear();
+    token.value = '';
     await _storage.delete(key: 'token');
-    await _storage.delete(key: 'id');
+    await _storage.delete(key: 'student_id');
     await _prefsService.clearAll();
-    Get.offAllNamed('/login');
   }
 }
