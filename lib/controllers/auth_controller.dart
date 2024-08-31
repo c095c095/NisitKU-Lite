@@ -109,6 +109,11 @@ class AuthController extends GetxController {
           isAuthenticated(true);
         } else {
           _logger.w('Failed to get profile: ${profile['message']}');
+
+          if (profile['forceLogout'] == true) {
+            await _clearAuthData();
+            Get.offAllNamed('/login');
+          }
         }
       }
     } catch (e) {

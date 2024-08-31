@@ -51,8 +51,10 @@ class AuthService extends GetxService {
 
       if (response.body[0]['status'] == 'true') {
         return {'success': true, 'forceLogout': false, 'data': response.body[0]};
-      } else {
+      } else if (response.body[0]['status'] == 'false') {
         return {'success': false, 'forceLogout': true, 'message': 'ไม่สามารถดึงข้อมูลได้'};
+      } else {
+        return {'success': false, 'forceLogout': false, 'message': 'ไม่สามารถดึงข้อมูลได้'};
       }
     } catch (e) {
       return {'success': false, 'forceLogout': false, 'message': 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ โปรดลองอีกครั้ง'};
