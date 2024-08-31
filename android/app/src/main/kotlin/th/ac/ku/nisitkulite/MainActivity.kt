@@ -1,4 +1,4 @@
-package com.example.nisitku_lite
+package th.ac.ku.nisitkulite
 
 import io.flutter.embedding.android.FlutterActivity
 
