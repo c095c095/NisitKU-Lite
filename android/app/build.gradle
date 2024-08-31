@@ -23,6 +23,12 @@ if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "th.ac.ku.nisitkulite"
     compileSdk = flutter.compileSdkVersion
@@ -44,15 +50,35 @@ android {
         versionName = flutterVersionName
     }
 
+    signingConfigs {
+        release {
+            keyAlias = keystoreProperties['keyAlias']
+            keyPassword = keystoreProperties['keyPassword']
+            storeFile = keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword = keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // Enable this when you want to debug the app
             signingConfig = signingConfigs.debug
+
+            // Enable this when you want to release the app
+            // signingConfig signingConfigs.release
+            // minifyEnabled true
+            // shrinkResources true
+
+            // Optional: Enable this if you want to keep debug logs for testing
+            // buildConfigField "boolean", "DEBUG", "false"
         }
     }
 }
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation("com.google.android.material:material:1.12.0")
 }
