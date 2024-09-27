@@ -124,6 +124,48 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<void> loadUserFromCloud() async {
+    try {
+      token.value = await _storage.read(key: 'token') ?? '';
+
+      if (token.value.isNotEmpty) {
+        isLoading(true);
+
+        var profile = await _authService.getProfile(token.value, user['id']);
+
+        if (profile['success'] == true) {
+          profile['data']?.remove('status');
+
+          final updatedUser = {
+            if (user['firstname_th'] != null) 'firstname_th': user['firstname_th'],
+            if (user['lastname_th'] != null) 'lastname_th': user['lastname_th'],
+            if (user['firstname_en'] != null) 'firstname_en': user['firstname_en'],
+            if (user['lastname_en'] != null) 'lastname_en': user['lastname_en'],
+          };
+
+          user.value = {...profile['data'], ...updatedUser};
+
+          for (final entry in user.entries) {
+            await _prefsService.setValue('student.${entry.key}', entry.value);
+          }
+
+          _logger.i('User updated: ${user.values}');
+        } else {
+          _logger.w('Failed to get profile: ${profile['message']}');
+
+          if (profile['forceLogout'] == true) {
+            await _clearAuthData();
+            Get.offAllNamed('/login');
+          }
+        }
+      }
+    } catch (e) {
+      _logger.e('Unexpected error: $e');
+    } finally {
+      isLoading(false);
+    }
+  }
+
   Future<void> logout() async {
     await _clearAuthData();
     Get.offAllNamed('/login');

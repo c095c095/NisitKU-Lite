@@ -6,8 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 /// Returns `true` if the device is connected to any network (Wi-Fi or mobile),
 /// and `false` if there is no network connection.
 Future<bool> checkNetworkConnectivity() async {
-  final List<ConnectivityResult> connectivityResult =
-      await (Connectivity().checkConnectivity());
+  final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
   if (connectivityResult.contains(ConnectivityResult.none)) {
     return false;
   } else {
