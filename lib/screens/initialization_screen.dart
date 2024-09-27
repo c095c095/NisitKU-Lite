@@ -23,7 +23,7 @@ class _InitializationScreenState extends State<InitializationScreen> {
     if (authController.isAuthenticated.value) {
       Get.offAllNamed('/home');
     } else {
-      Get.offAllNamed('/login');
+      Get.offAllNamed('/welcome');
     }
   }
 
