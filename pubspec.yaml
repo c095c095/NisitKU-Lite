@@ -31,3 +31,19 @@ flutter_launcher_icons:
 
 flutter:
   uses-material-design: true
+  fonts:
+  - family: Kanit
+    fonts:
+      - asset: assets/fonts/Kanit-Regular.ttf
+      - asset: assets/fonts/Kanit-Italic.ttf
+        style: italic
+      - asset: assets/fonts/Kanit-Bold.ttf
+        weight: 700
+      - asset: assets/fonts/Kanit-BoldItalic.ttf
+        weight: 700
+        style: italic
+      - asset: assets/fonts/Kanit-Light.ttf
+        weight: 300
+      - asset: assets/fonts/Kanit-LightItalic.ttf
+        weight: 300
+        style: italic
