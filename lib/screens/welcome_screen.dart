@@ -24,7 +24,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               const Text(
                 'NisitKU Lite\nเบากว่าคุณ เร็วกว่าคุณ\nดีกว่าคุณด้วย',
                 style: TextStyle(
-                  fontSize: 36.0,
+                  fontSize: 32.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -35,16 +35,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 'พบฟิเจอร์ดี ๆ ที่ไม่มีคนถาม ที่ดีกว่าแอปพลิเคชั่นต้นฉบับ (มั้ง)',
                 style: TextStyle(
                   fontSize: 16.0,
-                ),
-              ),
-              const Expanded(
-                child: Center(
-                  child: Text(
-                    '🤫🧏🏻‍♂️',
-                    style: TextStyle(
-                      fontSize: 80.0,
-                    ),
-                  ),
                 ),
               ),
               Expanded(
