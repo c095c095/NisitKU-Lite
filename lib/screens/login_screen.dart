@@ -4,6 +4,8 @@ import 'package:nisitku_lite/controllers/auth_controller.dart';
 import 'package:nisitku_lite/components/primary_button.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -112,19 +114,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   Obx(() {
                     if (_authController.errorMessage.value.isNotEmpty) {
-                      return Column(
-                        children: [
-                          Text(
-                            _authController.errorMessage.value,
-                            style: const TextStyle(color: Colors.red),
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(_authController.errorMessage.value),
+                            backgroundColor: Colors.red,
                           ),
-                          const SizedBox(height: 10),
-                        ],
-                      );
+                        );
+                        _authController.errorMessage.value = '';
+                      });
                     }
-
                     return Container();
-                  })
+                  }),
                 ],
               ),
             ),
