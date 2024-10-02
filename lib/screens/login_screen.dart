@@ -104,6 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     text: 'เข้าสู่ระบบ',
                     isLoading: _authController.isLoading,
                     onPressed: () async {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
                       if (_formKey.currentState!.validate()) {
                         await _authController.login(
                           _emailController.text,
@@ -115,7 +116,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   Obx(() {
                     if (_authController.errorMessage.value.isNotEmpty) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(_authController.errorMessage.value),
@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         _authController.errorMessage.value = '';
                       });
                     }
-                    return Container();
+                    return const SizedBox.shrink();
                   }),
                 ],
               ),

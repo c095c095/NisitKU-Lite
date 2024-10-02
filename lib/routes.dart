@@ -7,15 +7,15 @@ import 'package:nisitku_lite/screens/welcome_screen.dart';
 final List<GetPage> routes = [
   GetPage(
     name: '/initialization',
-    page: () => InitializationScreen(),
+    page: () => const InitializationScreen(),
   ),
   GetPage(
     name: '/welcome',
-    page: () => WelcomeScreen(),
+    page: () => const WelcomeScreen(),
   ),
   GetPage(
     name: '/login',
-    page: () => LoginScreen(),
+    page: () => const LoginScreen(),
   ),
   GetPage(
     name: '/home',
